@@ -4,9 +4,49 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VasProductivity.Views"
-        mc:Ignorable="d" Background="Red"
-        Title="ShellView" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        mc:Ignorable="d"
+        Title="VAS Productivity" Height="150" Width="800">
+    <Border Padding="10">
+        <StackPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="6*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Content="Pack Station:" FontSize="14" />
+                <ComboBox Grid.Column="1" 
+                          x:Name="PackStationsComboBox" 
+                          VerticalAlignment="Center" 
+                          
+                          DisplayMemberPath="station_description"
+                          SelectedValuePath="station_description"
+                          ItemsSource="{Binding Path=PackStations}"
+                          SelectedItem="{Binding Path=SelectedPackStation, Mode=TwoWay}">
+                </ComboBox>
+
+            </Grid>
+
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="15*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Content="HD:" FontSize="14" />
+                <TextBox x:Name="HdTextBox" 
+                         Grid.Column="1" 
+                         VerticalAlignment="Center" 
+                         Text="{Binding Path=Hd, Mode=TwoWay}"/>
+                <Button x:Name="EnterButton" Grid.Column="2" Content="Enter" Margin="5"/>
+            </Grid>
+
+            <Label x:Name="HdInformation" Content="{Binding Path=HdInformation}" />
+
+        </StackPanel>
+    </Border>
 </Window>
