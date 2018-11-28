@@ -20,11 +20,11 @@
                 <ComboBox Grid.Column="1" 
                           x:Name="PackStationsComboBox" 
                           VerticalAlignment="Center" 
-                          
-                          DisplayMemberPath="station_description"
-                          SelectedValuePath="station_description"
                           ItemsSource="{Binding Path=PackStations}"
-                          SelectedItem="{Binding Path=SelectedPackStation, Mode=TwoWay}">
+                          SelectedIndex="{Binding Path=SelectedPackStation, Mode=TwoWay}">
+                          <!--DisplayMemberPath="station_description"
+                          SelectedValuePath="station_description"-->
+                          
                 </ComboBox>
 
             </Grid>

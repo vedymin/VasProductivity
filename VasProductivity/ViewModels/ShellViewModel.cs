@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using System.Data;
+using System.Linq;
 using VAS_Prod;
 
 namespace VasProductivity.ViewModels
@@ -10,28 +11,43 @@ namespace VasProductivity.ViewModels
 		{
 			ConnectionSettings.CheckForFolderAndFile();
 			ConnectionSettings.ReadFromFile();
+			DownloadAndSetPackStationsInComboBox();
 		}
 
-		private string _hd;
-		public string Hd {
-			get => _hd;
+		private void DownloadAndSetPackStationsInComboBox()
+		{
+			PackStations = DatabaseConnection.DownloadPackStations();
+
+			if (ConnectionSettings.PackStation != string.Empty)
+			{
+				SelectedPackStation = PackStations.IndexOf(ConnectionSettings.PackStation);
+			}
+			else
+			{
+				SelectedPackStation = 0;
+			}
+		}
+
+		private string _scanTextBox;
+		public string ScanTextBox {
+			get => _scanTextBox;
 			set {
-				_hd = value;
+				_scanTextBox = value;
 				NotifyOfPropertyChange("Hd");
 			}
 		}
 
-		private string _hdInformation;
-		public string HdInformation {
-			get => _hdInformation;
+		private string _informationLabel;
+		public string InformationLabel {
+			get => _informationLabel;
 			set {
-				_hdInformation = value;
+				_informationLabel = value;
 				NotifyOfPropertyChange("HdInformation");
 			}
 		}
 
-		private DataTable _packStations;
-		public DataTable PackStations {
+		private BindableCollection<string> _packStations;
+		public BindableCollection<string> PackStations {
 			get => _packStations;
 			set {
 				_packStations = value;
@@ -39,12 +55,18 @@ namespace VasProductivity.ViewModels
 			}
 		}
 
-		private DataRow _selectedPackStation;
-		public DataRow SelectedPackStation {
+		private int _selectedPackStation;
+		public int SelectedPackStation {
 			get => _selectedPackStation;
 			set {
 
 				_selectedPackStation = value;
+
+				if (!(value < 0))
+				{
+					ConnectionSettings.PackStation = PackStations[value];
+					ConnectionSettings.SaveToFile();
+				}
 				NotifyOfPropertyChange("SelectedPackStation");
 			}
 		}
