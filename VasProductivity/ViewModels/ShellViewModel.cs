@@ -28,7 +28,7 @@ namespace VasProductivity.ViewModels
 			get => _scanTextBox;
 			set {
 				_scanTextBox = value;
-				NotifyOfPropertyChange("Hd");
+				NotifyOfPropertyChange(() => ScanTextBox);
 			}
 		}
 
@@ -37,7 +37,7 @@ namespace VasProductivity.ViewModels
 			get => _informationLabel;
 			set {
 				_informationLabel = value;
-				NotifyOfPropertyChange("HdInformation");
+				NotifyOfPropertyChange(() => InformationLabel);
 			}
 		}
 
@@ -46,7 +46,7 @@ namespace VasProductivity.ViewModels
 			get => _packStations;
 			set {
 				_packStations = value;
-				NotifyOfPropertyChange("PackStation");
+				NotifyOfPropertyChange(() => PackStations);
 			}
 		}
 
@@ -57,7 +57,7 @@ namespace VasProductivity.ViewModels
 				_selectedPackStation = value;
 				Settings.Default.SelectedPackStationSetting = value.idstations;
 				Settings.Default.Save();
-				NotifyOfPropertyChange("SelectedPackStation");
+				NotifyOfPropertyChange(() => SelectedPackStation);
 			}
 		}
 	}
