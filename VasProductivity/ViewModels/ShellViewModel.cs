@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -59,6 +60,13 @@ namespace VasProductivity.ViewModels
 				Settings.Default.Save();
 				NotifyOfPropertyChange(() => SelectedPackStation);
 			}
+		}
+
+		public void EnterButton()
+		{
+			DataAccessModel dataAccess = new DataAccessModel();
+			InformationLabel = dataAccess.GetQuantityOfPiecesInHd(ScanTextBox).Pieces.ToString();
+			ScanTextBox = String.Empty;
 		}
 	}
 }
