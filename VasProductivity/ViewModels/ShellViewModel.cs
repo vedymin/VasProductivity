@@ -16,13 +16,7 @@ namespace VasProductivity.ViewModels
 			DownloadAndSetPackStationsInComboBox();
 		}
 
-		private void DownloadAndSetPackStationsInComboBox()
-		{
-			DataAccessModel dataAccess = new DataAccessModel();
-			PackStations = dataAccess.GetPackStations();
-			SelectedPackStation = PackStations.Where(x => x.idstations == Settings.Default.SelectedPackStationSetting)
-				.FirstOrDefault();
-		}
+		#region Properties
 
 		private string _scanTextBox;
 		public string ScanTextBox {
@@ -62,10 +56,18 @@ namespace VasProductivity.ViewModels
 			}
 		}
 
-		public void EnterButton()
+		#endregion
+
+		private void DownloadAndSetPackStationsInComboBox()
 		{
-			DataAccessModel dataAccess = new DataAccessModel();
-			InformationLabel = dataAccess.GetQuantityOfPiecesInHd(ScanTextBox).Pieces.ToString();
+			PackStations = DataAccessModel.GetPackStations();
+			SelectedPackStation = PackStations.Where(x => x.idstations == Settings.Default.SelectedPackStationSetting)
+				.FirstOrDefault();
+		}
+
+		private void EnterButton()
+		{
+			InformationLabel = DataAccessModel.GetQuantityOfPiecesInHd(ScanTextBox).Pieces.ToString();
 			ScanTextBox = String.Empty;
 		}
 	}

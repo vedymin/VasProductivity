@@ -23,7 +23,7 @@
                           ItemsSource="{Binding Path=PackStations}"
                           SelectedItem="{Binding Path=SelectedPackStation, Mode=TwoWay}"
                           DisplayMemberPath="station_description">
-                            <!--SelectedValuePath="station_description"-->
+
                           
                 </ComboBox>
 
