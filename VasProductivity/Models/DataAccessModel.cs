@@ -10,9 +10,9 @@ using VasProductivity.Misc;
 
 namespace VAS_Prod
 {
-	public class DataAccessModel
+	public static class DataAccessModel
 	{
-		public List<PackStationModel> GetPackStations()
+		public static List<PackStationModel> GetPackStations()
 		{
 			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("db_sorter_prod")))
 			{
@@ -21,7 +21,7 @@ namespace VAS_Prod
 			}
 		}
 
-		public PiecesOfHdInReflex GetQuantityOfPiecesInHd(string hd)
+		public static PiecesOfHdInReflex GetQuantityOfPiecesInHd(string hd)
 		{
 			using (IDbConnection connection = new iDB2Connection(ConnectionHelper.CnnVall("reflex")))
 			{
