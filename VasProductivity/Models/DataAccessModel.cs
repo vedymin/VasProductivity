@@ -21,22 +21,22 @@ namespace VAS_Prod
 			}
 		}
 
-		public static HdInReflex GetQuantityOfPiecesInHd(string hd)
+		public static HdModel GetQuantityOfPiecesInHd(string hd)
 		{
 			using (IDbConnection connection = new iDB2Connection(ConnectionHelper.CnnVall("reflex")))
 			{
-				var result = connection.QuerySingleOrDefault<HdInReflex>(
-					$"SELECT sum(GEQGEI) as Pieces FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}'");
+				var result = connection.QuerySingleOrDefault<HdModel>(
+					$"SELECT sum(GEQGEI) as pcs FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}'");
 				return result;
 			}
 		}
 
-		public static HdInReflex GetQuantityOfComponentsInHd(string hd)
+		public static HdModel GetQuantityOfComponentsInHd(string hd)
 		{
 			using (IDbConnection connection = new iDB2Connection(ConnectionHelper.CnnVall("reflex")))
 			{
-				var result = connection.QuerySingleOrDefault<HdInReflex>(
-					$"SELECT sum(CTQCOM) as Pieces FROM GUEPRDDB.hlcompp WHERE CTCART = (SELECT GECART FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}')");
+				var result = connection.QuerySingleOrDefault<HdModel>(
+					$"SELECT sum(CTQCOM) as pcs FROM GUEPRDDB.hlcompp WHERE CTCART = (SELECT GECART FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}')");
 				return result;
 			}
 		}
