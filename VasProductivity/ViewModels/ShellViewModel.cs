@@ -12,7 +12,7 @@ namespace VasProductivity.ViewModels
 {
 	internal class ShellViewModel : Screen
 	{
-		ScannedHdRecordModel ScannedHd = new ScannedHdRecordModel();
+		HdModel ScannedHd = new HdModel();
 		HdInReflex HdInReflex = new HdInReflex();
 
 		public ShellViewModel()
@@ -66,7 +66,7 @@ namespace VasProductivity.ViewModels
 		public void EnterButton()
 		{
 			if (CheckIfHdIsNumeric(Hd) == false) return;
-			HdInReflex.GetQuantityOfHd(ScannedHd);
+			ScannedHd.GetQuantityOfHd();
 			InformAboutQuantitesInside();
 			ClearScanningTextBox();
 		}
@@ -85,7 +85,14 @@ namespace VasProductivity.ViewModels
 
 		private void InformAboutQuantitesInside()
 		{
-			InformationLabel = $"HD {Hd} have {ScannedHd.pcs} items inside.";
+			if (ScannedHd.pcs > 0)
+			{
+				InformationLabel = $"HD {Hd} have {ScannedHd.pcs} items inside.";
+			}
+			else
+			{
+				MessageBox.Show($"HD {Hd} is unknown", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
 		private bool CheckIfHdIsNumeric(string hd)
