@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Windows;
 using VasProductivity.Properties;
 using VAS_Prod;
 
@@ -11,6 +12,9 @@ namespace VasProductivity.ViewModels
 {
 	internal class ShellViewModel : Screen
 	{
+		ScannedHdRecordModel ScannedHd = new ScannedHdRecordModel();
+		HdInReflex HdInReflex = new HdInReflex();
+
 		public ShellViewModel()
 		{
 			DownloadAndSetPackStationsInComboBox();
@@ -19,11 +23,12 @@ namespace VasProductivity.ViewModels
 		#region Properties
 
 		private string _scanTextBox;
-		public string ScanTextBox {
-			get => _scanTextBox;
+		public string Hd {
+			get { return ScannedHd.HD; }
 			set {
 				_scanTextBox = value;
-				NotifyOfPropertyChange(() => ScanTextBox);
+				ScannedHd.HD = value;
+				NotifyOfPropertyChange(() => ScannedHd.HD);
 			}
 		}
 
@@ -58,6 +63,14 @@ namespace VasProductivity.ViewModels
 
 		#endregion
 
+		public void EnterButton()
+		{
+			if (CheckIfHdIsNumeric(Hd) == false) return;
+			HdInReflex.GetQuantityOfHd(ScannedHd);
+			InformAboutQuantitesInside();
+			ClearScanningTextBox();
+		}
+
 		private void DownloadAndSetPackStationsInComboBox()
 		{
 			PackStations = DataAccessModel.GetPackStations();
@@ -65,10 +78,28 @@ namespace VasProductivity.ViewModels
 				.FirstOrDefault();
 		}
 
-		private void EnterButton()
+		private void ClearScanningTextBox()
 		{
-			InformationLabel = DataAccessModel.GetQuantityOfPiecesInHd(ScanTextBox).Pieces.ToString();
-			ScanTextBox = String.Empty;
+			Hd = String.Empty;
+		}
+
+		private void InformAboutQuantitesInside()
+		{
+			InformationLabel = $"HD {Hd} have {ScannedHd.pcs} items inside.";
+		}
+
+		private bool CheckIfHdIsNumeric(string hd)
+		{
+			if(System.Text.RegularExpressions.Regex.IsMatch(hd, "^(00)?[0-9]{18}$"))
+			{
+				return true;
+			}
+			else
+			{
+				MessageBox.Show("This HD is incorrect", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+				return false;
+			}
+			
 		}
 	}
 }
