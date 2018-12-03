@@ -116,7 +116,7 @@
     <Compile Include="Models\DataAccessModel.cs" />
     <Compile Include="Models\PackStationModel.cs" />
     <Compile Include="Models\HdInReflex.cs" />
-    <Compile Include="Models\ScannedHdRecordModel.cs" />
+    <Compile Include="Models\HdModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
