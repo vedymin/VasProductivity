@@ -13,14 +13,11 @@ namespace VasProductivity.ViewModels
 	internal class ShellViewModel : Screen
 	{
 		HdModel ScannedHd = new HdModel();
-		HdInReflex HdInReflex = new HdInReflex();
 
 		public ShellViewModel()
 		{
 			DownloadAndSetPackStationsInComboBox();
 		}
-
-		#region Properties
 
 		private string _scanTextBox;
 		public string Hd {
@@ -61,14 +58,37 @@ namespace VasProductivity.ViewModels
 			}
 		}
 
-		#endregion
-
 		public void EnterButton()
 		{
-			if (CheckIfHdIsNumeric(Hd) == false) return;
-			ScannedHd.GetQuantityOfHd();
-			InformAboutQuantitesInside();
-			ClearScanningTextBox();
+			try
+			{
+				ClearInformationLabel();
+
+				if (CheckIfHdIsNumeric() == false) return;
+				//if (CheckIfHdIsAlreadyScannedInMySql() == true) return;
+			
+				ScannedHd.GetQuantityOfHdFromReflex();
+				ScannedHd.GetVasOfHdFromReflex();
+				ScannedHd.SavePackStation(SelectedPackStation.idstations);
+				InformAboutQuantitesInside();
+				
+
+			}
+			finally
+			{
+				ClearScanningTextBox();
+				HdModel ScannedHd = new HdModel();
+			}
+		}
+
+		private bool CheckIfHdIsAlreadyScannedInMySql()
+		{
+			return ScannedHd.CheckIfHdIsAlreadyScannedInMySql();
+		}
+
+		private void ClearInformationLabel()
+		{
+			InformationLabel = String.Empty;
 		}
 
 		private void DownloadAndSetPackStationsInComboBox()
@@ -95,18 +115,9 @@ namespace VasProductivity.ViewModels
 			}
 		}
 
-		private bool CheckIfHdIsNumeric(string hd)
+		private bool CheckIfHdIsNumeric()
 		{
-			if(System.Text.RegularExpressions.Regex.IsMatch(hd, "^(00)?[0-9]{18}$"))
-			{
-				return true;
-			}
-			else
-			{
-				MessageBox.Show("This HD is incorrect", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return false;
-			}
-			
+			return ScannedHd.CheckIfHdIsNumeric() == true ? true : false;
 		}
 	}
 }
