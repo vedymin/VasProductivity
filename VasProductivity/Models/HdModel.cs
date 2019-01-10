@@ -57,9 +57,7 @@ namespace VAS_Prod
 
 		public void GetVasOfHdFromReflex()
 		{
-			HdModel hdToCheck = new HdModel();
-			hdToCheck.VasActivities = DataAccessModel.GetVasListOfHd(HD);
-			VasActivities = hdToCheck.VasActivities;
+			VasActivities = DataAccessModel.GetVasListOfHd(HD);
 		}
 
 		internal void SavePackStation(int packStationId)

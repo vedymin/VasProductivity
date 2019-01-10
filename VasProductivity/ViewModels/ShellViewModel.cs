@@ -72,7 +72,6 @@ namespace VasProductivity.ViewModels
 				ScannedHd.SavePackStation(SelectedPackStation.idstations);
 				InformAboutQuantitesInside();
 				
-
 			}
 			finally
 			{

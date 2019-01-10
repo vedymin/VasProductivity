@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VasProductivity", "VasProductivity\VasProductivity.csproj", "{5431222C-D8F0-4BBF-B451-2AFA9ECBE256}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VasProductivityDashboard", "VasProductivityDashboard\VasProductivityDashboard.csproj", "{0D226DB8-9ED5-4C8E-B18A-0AA10C070EAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5431222C-D8F0-4BBF-B451-2AFA9ECBE256}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5431222C-D8F0-4BBF-B451-2AFA9ECBE256}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5431222C-D8F0-4BBF-B451-2AFA9ECBE256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D226DB8-9ED5-4C8E-B18A-0AA10C070EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D226DB8-9ED5-4C8E-B18A-0AA10C070EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D226DB8-9ED5-4C8E-B18A-0AA10C070EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D226DB8-9ED5-4C8E-B18A-0AA10C070EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
