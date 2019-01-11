@@ -14,19 +14,19 @@ namespace VAS_Prod
 	{
 		public static List<PackStationModel> GetPackStations()
 		{
-			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("db_sorter_prod")))
+			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
 			{
 				return connection.Query<PackStationModel>(
-					"SELECT station_description, idstations from stations ORDER BY station_description ASC").ToList();
+					"SELECT PackStationName, id from pack_station ORDER BY PackStationName ASC").ToList();
 			}
 		}
 
 		public static HdModel CheckIfHdIsAlreadyScannedInMySql(string scannedHd)
 		{
-			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("db_sorter_prod")))
+			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
 			{
 				var result = connection.QuerySingleOrDefault<HdModel>(
-					$"SELECT HD, pack_station, date_time, station_description FROM hdscan inner join stations on hdscan.pack_station = stations.idstations WHERE hd = \'{scannedHd}\'");
+					$"SELECT Hd, PackStation_id, DateAndTime, PackStationName FROM hd_scan inner join pack_station on hd_scan.PackStation_id = pack_station.id WHERE Hd = \'{scannedHd}\'");
 				return result;
 			}
 		}
@@ -36,7 +36,7 @@ namespace VAS_Prod
 			using (IDbConnection connection = new iDB2Connection(ConnectionHelper.CnnVall("reflex")))
 			{
 				var result = connection.QuerySingleOrDefault<HdModel>(
-					$"SELECT sum(GEQGEI) as pcs FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}'");
+					$"SELECT sum(GEQGEI) as Quantity FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}'");
 				return result;
 			}
 		}
@@ -46,7 +46,7 @@ namespace VAS_Prod
 			using (IDbConnection connection = new iDB2Connection(ConnectionHelper.CnnVall("reflex")))
 			{
 				var result = connection.QuerySingleOrDefault<HdModel>(
-					$"SELECT sum(CTQCOM) as pcs FROM GUEPRDDB.hlcompp WHERE CTCART = (SELECT GECART FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}')");
+					$"SELECT sum(CTQCOM) as Quantity FROM GUEPRDDB.hlcompp WHERE CTCART = (SELECT GECART FROM GUEPRDDB.HLGEINP WHERE GENSUP = '{hd}')");
 				return result;
 			}
 		}
@@ -59,5 +59,7 @@ namespace VAS_Prod
 					$"SELECT VAVCOD as VasActivities FROM GUEPRD_DAT.gnvacop WHERE VANCOL = '{hd}'").ToList();
 			}
 		}
+
+
 	}
 }

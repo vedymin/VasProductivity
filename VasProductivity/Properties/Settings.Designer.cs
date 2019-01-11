@@ -25,7 +25,7 @@ namespace VasProductivity.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("22")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int SelectedPackStationSetting {
             get {
                 return ((int)(this["SelectedPackStationSetting"]));

@@ -22,7 +22,7 @@
                           VerticalAlignment="Center" 
                           ItemsSource="{Binding Path=PackStations}"
                           SelectedItem="{Binding Path=SelectedPackStation, Mode=TwoWay}"
-                          DisplayMemberPath="station_description">
+                          DisplayMemberPath="PackStationName">
 
                           
                 </ComboBox>
@@ -37,7 +37,7 @@
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0" Content="HD:" FontSize="14" />
+                <Label Grid.Column="0" Content="Hd:" FontSize="14" />
                 <TextBox x:Name="ScanTextBox" 
                          Grid.Column="1" 
                          VerticalAlignment="Center" 

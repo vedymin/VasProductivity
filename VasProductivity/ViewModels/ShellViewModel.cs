@@ -21,11 +21,12 @@ namespace VasProductivity.ViewModels
 
 		private string _scanTextBox;
 		public string Hd {
-			get { return ScannedHd.HD; }
-			set {
+			get { return ScannedHd.Hd; }
+			set
+			{
 				_scanTextBox = value;
-				ScannedHd.HD = value;
-				NotifyOfPropertyChange(() => ScannedHd.HD);
+				ScannedHd.Hd = value;
+				NotifyOfPropertyChange(() => ScannedHd.Hd);
 			}
 		}
 
@@ -52,8 +53,11 @@ namespace VasProductivity.ViewModels
 			get => _selectedPackStation;
 			set {
 				_selectedPackStation = value;
-				Settings.Default.SelectedPackStationSetting = value.idstations;
-				Settings.Default.Save();
+				if (value != null)
+				{
+					Settings.Default.SelectedPackStationSetting = value.id;
+					Settings.Default.Save();
+				}
 				NotifyOfPropertyChange(() => SelectedPackStation);
 			}
 		}
@@ -66,10 +70,10 @@ namespace VasProductivity.ViewModels
 
 				if (CheckIfHdIsNumeric() == false) return;
 				//if (CheckIfHdIsAlreadyScannedInMySql() == true) return;
-			
+				ScannedHd.TrimHd();
 				ScannedHd.GetQuantityOfHdFromReflex();
 				ScannedHd.GetVasOfHdFromReflex();
-				ScannedHd.SavePackStation(SelectedPackStation.idstations);
+				ScannedHd.SavePackStation(SelectedPackStation.id);
 				InformAboutQuantitesInside();
 				
 			}
@@ -93,7 +97,7 @@ namespace VasProductivity.ViewModels
 		private void DownloadAndSetPackStationsInComboBox()
 		{
 			PackStations = DataAccessModel.GetPackStations();
-			SelectedPackStation = PackStations.Where(x => x.idstations == Settings.Default.SelectedPackStationSetting)
+			SelectedPackStation = PackStations.Where(x => x.id == Settings.Default.SelectedPackStationSetting)
 				.FirstOrDefault();
 		}
 
@@ -104,13 +108,13 @@ namespace VasProductivity.ViewModels
 
 		private void InformAboutQuantitesInside()
 		{
-			if (ScannedHd.pcs > 0)
+			if (ScannedHd.Quantity > 0)
 			{
-				InformationLabel = $"HD {Hd} have {ScannedHd.pcs} items inside.";
+				InformationLabel = $"Hd {Hd} have {ScannedHd.Quantity} items inside.";
 			}
 			else
 			{
-				MessageBox.Show($"HD {Hd} is unknown", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show($"Hd {Hd} is unknown", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 

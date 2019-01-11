@@ -2,7 +2,7 @@
 {
 	public class PackStationModel
 	{
-		public string station_description { get; set; }
-		public int idstations { get; set; }
+		public string PackStationName { get; set; }
+		public int id { get; set; }
 	}
 }

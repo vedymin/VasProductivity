@@ -7,34 +7,34 @@ namespace VAS_Prod
 	public class HdModel
 	{
 		public int id { get; set; }
-		public string HD { get; set; }
-		public int pack_station { get; set; }
-		public int pcs { get; set; }
-		public DateTime date_time { get; set; }
-		public string station_description { get; set; }
+		public string Hd { get; set; }
+		public int PackStation_id { get; set; }
+		public int Quantity { get; set; }
+		public DateTime DateAndTime { get; set; }
+		public string PackStationName { get; set; }
 		public List<string> VasActivities { get; set; }
 
 		public HdModel()
 		{
-			date_time = DateTime.Now;
+			DateAndTime = DateTime.Now;
 		}
 
 		public void GetQuantityOfHdFromReflex()
 		{
-			pcs = DataAccessModel.GetQuantityOfPiecesInHd(HD).pcs;
-			if (pcs == 1)
+			Quantity = DataAccessModel.GetQuantityOfPiecesInHd(Hd).Quantity;
+			if (Quantity == 1)
 			{
-				pcs = DataAccessModel.GetQuantityOfComponentsInHd(HD).pcs;
+				Quantity = DataAccessModel.GetQuantityOfComponentsInHd(Hd).Quantity;
 			}
 		}
 
 		public bool CheckIfHdIsAlreadyScannedInMySql()
 		{
 			HdModel hdToCheck = new HdModel();
-			hdToCheck = DataAccessModel.CheckIfHdIsAlreadyScannedInMySql(HD);
-			if (hdToCheck != null && hdToCheck.pack_station != 0)
+			hdToCheck = DataAccessModel.CheckIfHdIsAlreadyScannedInMySql(Hd);
+			if (hdToCheck != null && hdToCheck.PackStation_id != 0)
 			{
-				MessageBox.Show($"HD {hdToCheck.HD} was already scanned by pack station {hdToCheck.station_description} on {hdToCheck.date_time.ToShortDateString()} at {hdToCheck.date_time.TimeOfDay}.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show($"Hd {hdToCheck.Hd} was already scanned by pack station {hdToCheck.PackStationName} on {hdToCheck.DateAndTime.ToShortDateString()} at {hdToCheck.DateAndTime.TimeOfDay}.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
 				return true;
 
 			}
@@ -43,13 +43,14 @@ namespace VAS_Prod
 
 		public bool CheckIfHdIsNumeric()
 		{
-			if (System.Text.RegularExpressions.Regex.IsMatch(HD, "^(00)?[0-9]{18}$"))
+			if (System.Text.RegularExpressions.Regex.IsMatch(Hd, "^(00)?[0-9]{18}$"))
 			{
+				//TODO cut two zeros at the begining
 				return true;
 			}
 			else
 			{
-				MessageBox.Show("This HD is incorrect", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show("This Hd is incorrect", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
 				return false;
 			}
 
@@ -57,12 +58,20 @@ namespace VAS_Prod
 
 		public void GetVasOfHdFromReflex()
 		{
-			VasActivities = DataAccessModel.GetVasListOfHd(HD);
+			VasActivities = DataAccessModel.GetVasListOfHd(Hd);
 		}
 
 		internal void SavePackStation(int packStationId)
 		{
-			pack_station = packStationId;
+			PackStation_id = packStationId;
+		}
+
+		internal void TrimHd()
+		{
+			if (!(Hd == null || Hd == string.Empty))
+			{
+				Hd = Hd.Substring(Hd.Length - 18);
+			}
 		}
 	}
 }
