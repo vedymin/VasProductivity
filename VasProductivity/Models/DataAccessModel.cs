@@ -7,6 +7,7 @@ using Dapper;
 using IBM.Data.DB2.iSeries;
 using MySql.Data.MySqlClient;
 using VasProductivity.Misc;
+using VasProductivity.Models;
 
 namespace VAS_Prod
 {
@@ -51,12 +52,12 @@ namespace VAS_Prod
 			}
 		}
 
-		public static List<string> GetVasListOfHd(string hd)
+		public static List<VasModel> GetVasListOfHd(string hd)
 		{
 			using (IDbConnection connection = new iDB2Connection(ConnectionHelper.CnnVall("reflex")))
 			{
-				return connection.Query<string>(
-					$"SELECT VAVCOD as VasActivities FROM GUEPRD_DAT.gnvacop WHERE VANCOL = '{hd}'").ToList();
+				return connection.Query<VasModel>(
+					$"SELECT VAVCOD as Description FROM GUEPRD_DAT.gnvacop WHERE VANCOL = '{hd}'").ToList();
 			}
 		}
 		// string hd, int quantity, DateTime dateAndTime, int packStation_id

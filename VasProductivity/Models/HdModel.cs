@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using VasProductivity.Models;
 
 namespace VAS_Prod
 {
@@ -12,7 +13,7 @@ namespace VAS_Prod
 		public int Quantity { get; set; }
 		public DateTime DateAndTime { get; set; }
 		public string PackStationName { get; set; }
-		public List<string> VasActivities { get; set; }
+		public List<VasModel> VasActivities { get; set; }
 
 		public void GetQuantityOfHdFromReflex()
 		{
