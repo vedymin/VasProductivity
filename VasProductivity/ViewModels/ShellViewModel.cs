@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using VasProductivity.Properties;
 using VAS_Prod;
+using System.Windows.Input;
 
 namespace VasProductivity.ViewModels
 {
@@ -62,7 +63,7 @@ namespace VasProductivity.ViewModels
 			}
 		}
 
-		public void EnterButton()
+		public void ScanOfHdDone()
 		{
 			try
 			{
@@ -72,15 +73,42 @@ namespace VasProductivity.ViewModels
 				//if (CheckIfHdIsAlreadyScannedInMySql() == true) return;
 				ScannedHd.TrimHd();
 				ScannedHd.GetQuantityOfHdFromReflex();
+				if (CheckIfHdExistInReflex() == false) return;
 				ScannedHd.GetVasOfHdFromReflex();
 				ScannedHd.SavePackStation(SelectedPackStation.id);
-				InformAboutQuantitesInside();
+				ScannedHd.InsertScannedHdIntoDatabase();
 				
 			}
 			finally
 			{
 				ClearScanningTextBox();
 				HdModel ScannedHd = new HdModel();
+			}
+		}
+
+		public void EnterPressed(KeyEventArgs keyArgs)
+		{
+			if (keyArgs.Key == Key.Enter)
+			{
+				ScanOfHdDone();
+			}
+		}
+
+		public void ButtonClicked()
+		{
+			ScanOfHdDone();
+		}
+
+		private bool CheckIfHdExistInReflex() { 
+			if(ScannedHd.Quantity < 1)
+			{
+				MessageBox.Show($"Hd {Hd} is unknown", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+			else
+			{
+				InformAboutQuantitesInside();
+				return true;
 			}
 		}
 
@@ -108,14 +136,7 @@ namespace VasProductivity.ViewModels
 
 		private void InformAboutQuantitesInside()
 		{
-			if (ScannedHd.Quantity > 0)
-			{
-				InformationLabel = $"Hd {Hd} have {ScannedHd.Quantity} items inside.";
-			}
-			else
-			{
-				MessageBox.Show($"Hd {Hd} is unknown", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
+			InformationLabel = $"Hd {Hd} have {ScannedHd.Quantity} items inside.";
 		}
 
 		private bool CheckIfHdIsNumeric()

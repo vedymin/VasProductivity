@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VasProductivity.Views"
         mc:Ignorable="d"
+        xmlns:cal="http://www.caliburnproject.org"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Title="VAS Productivity" Height="150" Width="800">
     <Border Padding="10">
         <StackPanel>
@@ -38,11 +40,17 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" Content="Hd:" FontSize="14" />
-                <TextBox x:Name="ScanTextBox" 
+                <TextBox x:Name="Hd" 
                          Grid.Column="1" 
                          VerticalAlignment="Center" 
-                         Text="{Binding Path=Hd, Mode=TwoWay}"/>
-                <Button x:Name="EnterButton" Grid.Column="2" Content="Enter" Margin="5,5,5,0" Height="22" VerticalAlignment="Top"/>
+                         cal:Message.Attach="[Event KeyDown] = [Action EnterPressed($eventArgs)]"
+                         />
+                <Button x:Name="EnterButton" 
+                        Grid.Column="2" Content="Enter" 
+                        Margin="5,5,5,0" Height="22" 
+                        VerticalAlignment="Top"
+                        cal:Message.Attach="[Event Click] = [Action ButtonClicked]"
+                        />
             </Grid>
 
             <Label x:Name="InformationLabel"/>

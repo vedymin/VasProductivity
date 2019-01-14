@@ -59,7 +59,17 @@ namespace VAS_Prod
 					$"SELECT VAVCOD as VasActivities FROM GUEPRD_DAT.gnvacop WHERE VANCOL = '{hd}'").ToList();
 			}
 		}
+		// string hd, int quantity, DateTime dateAndTime, int packStation_id
+		public static void InsertScannedHdIntoDatabase(HdModel scannedHd)
+		{
+			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
+			{
+				connection.Execute("InsertScannedHdIntoDatabase",
+					scannedHd, commandType: CommandType.StoredProcedure);
 
+				//string processQuery = "INSERT INTO vas_activities__hd_scan (HdScan_id, VasDescriptions_id"
+			}
 
+		}
 	}
 }

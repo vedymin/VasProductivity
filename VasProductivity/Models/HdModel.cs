@@ -14,11 +14,6 @@ namespace VAS_Prod
 		public string PackStationName { get; set; }
 		public List<string> VasActivities { get; set; }
 
-		public HdModel()
-		{
-			DateAndTime = DateTime.Now;
-		}
-
 		public void GetQuantityOfHdFromReflex()
 		{
 			Quantity = DataAccessModel.GetQuantityOfPiecesInHd(Hd).Quantity;
@@ -73,5 +68,17 @@ namespace VAS_Prod
 				Hd = Hd.Substring(Hd.Length - 18);
 			}
 		}
+
+		internal void InsertScannedHdIntoDatabase()
+		{
+			DateAndTime = DateTime.Now;
+			DataAccessModel.InsertScannedHdIntoDatabase(this);
+
+		}
+
+		//public void InsertScannedHdIntoDatabase()
+		//{
+		//	DataAccessModel.InsertScannedHdIntoDatabase(Hd, Quantity, DateAndTime, PackStation_id);
+		//}
 	}
 }
