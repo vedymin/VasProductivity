@@ -3,34 +3,50 @@ using System.Collections.Generic;
 using System.Windows;
 using VasProductivity.Models;
 
-namespace VAS_Prod
+namespace VasProductivity
 {
 	public class HdModel
 	{
-		public int id { get; set; }
-		public string Hd { get; set; }
-		public int PackStation_id { get; set; }
+		public int HdID { get; set; }
+		public int PackStationID { get; set; }
 		public int Quantity { get; set; }
-		public DateTime DateAndTime { get; set; }
+		public DateTime ScanTimestamp { get; set; }
 		public string PackStationName { get; set; }
-		public List<VasModel> VasActivities { get; set; }
+		public OrderModel Order { get; set; }
 
-		public void GetQuantityOfHdFromReflex()
-		{
-			Quantity = DataAccessModel.GetQuantityOfPiecesInHd(Hd).Quantity;
-			if (Quantity == 1)
+		private string _hdNumber;
+		public string HdNumber {
+			get { return _hdNumber; }
+			set
 			{
-				Quantity = DataAccessModel.GetQuantityOfComponentsInHd(Hd).Quantity;
+				if (value != null)
+				{
+					_hdNumber = value.Trim();
+				}
 			}
 		}
 
-		public bool CheckIfHdIsAlreadyScannedInMySql()
+		public HdModel()
+		{
+			Order = new OrderModel();
+		}
+
+		public void DownloadQuantityForHd()
+		{
+			Quantity = ReflexAccessModel.GetQuantityOfPiecesInHd(HdNumber).Quantity;
+			if (Quantity == 1)
+			{
+				Quantity = ReflexAccessModel.GetQuantityOfComponentsInHd(HdNumber).Quantity;
+			}
+		}
+
+		public bool CheckIfScannedByPackStation()
 		{
 			HdModel hdToCheck = new HdModel();
-			hdToCheck = DataAccessModel.CheckIfHdIsAlreadyScannedInMySql(Hd);
-			if (hdToCheck != null && hdToCheck.PackStation_id != 0)
+			hdToCheck = MysqlAccessModel.CheckIfScannedByPackStation(HdNumber);
+			if (hdToCheck != null)
 			{
-				MessageBox.Show($"Hd {hdToCheck.Hd} was already scanned by pack station {hdToCheck.PackStationName} on {hdToCheck.DateAndTime.ToShortDateString()} at {hdToCheck.DateAndTime.TimeOfDay}.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show($"Hd {hdToCheck.HdNumber} was already scanned by pack station {hdToCheck.PackStationName} on {hdToCheck.ScanTimestamp.ToShortDateString()} at {hdToCheck.ScanTimestamp.TimeOfDay}.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
 				return true;
 
 			}
@@ -39,47 +55,97 @@ namespace VAS_Prod
 
 		public bool CheckIfHdIsNumeric()
 		{
-			if (System.Text.RegularExpressions.Regex.IsMatch(Hd, "^(00)?[0-9]{18}$"))
-			{
-				//TODO cut two zeros at the begining
-				return true;
-			}
-			else
-			{
-				MessageBox.Show("This Hd is incorrect", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
-				return false;
-			}
+			if (System.Text.RegularExpressions.Regex.IsMatch(HdNumber, "^(00)?[0-9]{18}$")) return true;
 
+			MessageBox.Show("This Hd is incorrect", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+			return false;
 		}
 
-		public void GetVasOfHdFromReflex()
-		{
-			VasActivities = DataAccessModel.GetVasListOfHd(Hd);
-		}
+		//public void GetVasOfHdFromReflex()
+		//{
+		//	VasActivities = DataAccessModel.GetVasListOfHd(HdNumber);
+		//}
 
 		internal void SavePackStation(int packStationId)
 		{
-			PackStation_id = packStationId;
+			PackStationID = packStationId;
 		}
 
-		internal void TrimHd()
+		internal void UpdateQuantityInHdTable()
 		{
-			if (!(Hd == null || Hd == string.Empty))
+			MysqlAccessModel.UpdateQuantityInHdTable(this);
+		}
+
+		internal bool CheckIfOrderIsKnown()
+		{
+			return MysqlAccessModel.CheckIfOrderIsKnown(Order.OrderName) is null ? false : true;
+		}
+
+		internal void DownloadOrderOfHd()
+		{
+			//OrderModel Order = new OrderModel();
+			Order.OrderName = ReflexAccessModel.DownloadOrderForHd(HdNumber);
+		}
+
+		internal void InsertOrder()
+		{
+			MysqlAccessModel.InsertOrder(Order.OrderName);
+		}
+
+		internal bool CheckIfExistsInHdTable()
+		{
+			Order.OrderName = MysqlAccessModel.DownloadOrderOfHd(HdNumber);
+			return Order.OrderName is null ? false : true;
+		}
+
+		internal void InsertIntoScannedByPackStation()
+		{
+			ScanTimestamp = DateTime.Now;
+			MysqlAccessModel.InsertIntoScannedByPackStation(this);
+		}
+
+		internal void DownloadAndUpdateAllBoxesForOrder()
+		{
+			var HDs = ReflexAccessModel.DownloadBoxesForOrder(Order.OrderName);
+			foreach (var hd in HDs)
 			{
-				Hd = Hd.Substring(Hd.Length - 18);
+				hd.Order.OrderName = Order.OrderName;
 			}
+			MysqlAccessModel.InsertAllBoxesToHdTable(HDs);
+		}
+
+		//internal void TrimHd()
+		//{
+		//	if (!(HdNumber == null || HdNumber == string.Empty))
+		//	{
+		//		HdNumber = HdNumber.Substring(HdNumber.Length - 18);
+		//	}
+		//}
+
+		internal string TrimHd(string _hd)
+		{
+			if (!(_hd == null || _hd == string.Empty)) return _hd.Substring(_hd.Length - 18);
+			return null;
+		}
+
+		internal void GetOrderOfHd()
+		{
+			OrderName = ReflexAccessModel.DownloadOrderForHd(HdNumber);
 		}
 
 		internal void InsertScannedHdIntoDatabase()
 		{
-			DateAndTime = DateTime.Now;
-			DataAccessModel.InsertScannedHdIntoDatabase(this);
+			
+
+
 
 		}
 
+		
+
 		//public void InsertScannedHdIntoDatabase()
 		//{
-		//	DataAccessModel.InsertScannedHdIntoDatabase(Hd, Quantity, DateAndTime, PackStation_id);
+		//	DataAccessModel.InsertScannedHdIntoDatabase(HdNumber, Quantity, ScanTimestamp, PackStationID);
 		//}
 	}
 }

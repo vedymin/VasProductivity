@@ -1,0 +1,1 @@
+SELECT * FROM vas_productivity_database.hd where HdNumber = '000000050002036999';

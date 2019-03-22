@@ -1,8 +1,8 @@
-﻿namespace VAS_Prod
+﻿namespace VasProductivity
 {
 	public class PackStationModel
 	{
 		public string PackStationName { get; set; }
-		public int id { get; set; }
+		public int PackStationID { get; set; }
 	}
 }

@@ -6,8 +6,9 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using VasProductivity.Properties;
-using VAS_Prod;
 using System.Windows.Input;
+using System.Threading.Tasks;
+using VasProductivity.Models;
 
 namespace VasProductivity.ViewModels
 {
@@ -20,14 +21,12 @@ namespace VasProductivity.ViewModels
 			DownloadAndSetPackStationsInComboBox();
 		}
 
-		private string _scanTextBox;
+		private string _hd;
 		public string Hd {
-			get { return ScannedHd.Hd; }
-			set
-			{
-				_scanTextBox = value;
-				ScannedHd.Hd = value;
-				NotifyOfPropertyChange(() => ScannedHd.Hd);
+			get { return _hd; }
+			set {
+				_hd = value;
+				NotifyOfPropertyChange(() => Hd);
 			}
 		}
 
@@ -56,7 +55,7 @@ namespace VasProductivity.ViewModels
 				_selectedPackStation = value;
 				if (value != null)
 				{
-					Settings.Default.SelectedPackStationSetting = value.id;
+					Settings.Default.SelectedPackStationSetting = value.PackStationID;
 					Settings.Default.Save();
 				}
 				NotifyOfPropertyChange(() => SelectedPackStation);
@@ -67,22 +66,56 @@ namespace VasProductivity.ViewModels
 		{
 			try
 			{
+				ScannedHd.HdNumber = Hd;
 				ClearInformationLabel();
+				ClearScanningTextBox();
 
-				if (CheckIfHdIsNumeric() == false) return;
-				//if (CheckIfHdIsAlreadyScannedInMySql() == true) return;
-				ScannedHd.TrimHd();
-				ScannedHd.GetQuantityOfHdFromReflex();
-				if (CheckIfHdExistInReflex() == false) return;
-				ScannedHd.GetVasOfHdFromReflex();
-				ScannedHd.SavePackStation(SelectedPackStation.id);
-				ScannedHd.InsertScannedHdIntoDatabase();
+				if (ScannedHd.CheckIfHdIsNumeric() == false) return;
+				if (ScannedHd.CheckIfScannedByPackStation() == true) return;
+
+				ScannedHd.DownloadQuantityForHd();
+				if (CheckIfHdExists() == false) return;
 				
+				if (ScannedHd.CheckIfExistsInHdTable() == true)
+				{
+					InformAboutQuantitesInside();
+					ScannedHd.UpdateQuantityInHdTable();
+					ScannedHd.InsertIntoScannedByPackStation();
+					return;
+				}
+
+				ScannedHd.DownloadOrderOfHd();
+				InformAboutQuantitesInside();
+				if (ScannedHd.CheckIfOrderIsKnown() == true)
+				{
+					ScannedHd.DownloadAndUpdateAllBoxesForOrder();
+				}
+				else
+				{
+					ScannedHd.InsertOrder();
+					//ScannedHd.DownloadVasesForOrder();
+					//ScannedHd.InsertVasesForOrder();
+					//ScannedHd.DownloadAndUpdateAllBoxesForOrder();
+				}
+				ScannedHd.UpdateQuantityInHdTable();
+				ScannedHd.InsertIntoScannedByPackStation();
+
+
+				//ScannedHd.InsertScannedHdIntoDatabase();
+				//ScannedHd.GetOrderOfHd();
+				// ScannedHd.GetVasOfHdFromReflex();
+
+				// you can refactor below as one function UpdateBoxesForOrder
+
+
+				//ScannedHd.SavePackStation(SelectedPackStation.id);
+				//ScannedHd.InsertScannedHdIntoDatabase();
+
 			}
 			finally
 			{
-				ClearScanningTextBox();
 				HdModel ScannedHd = new HdModel();
+				InformationLabel = InformationLabel + "    DONE";
 			}
 		}
 
@@ -90,33 +123,25 @@ namespace VasProductivity.ViewModels
 		{
 			if (keyArgs.Key == Key.Enter)
 			{
-				ScanOfHdDone();
+				Task.Run(new System.Action(ScanOfHdDone));
 			}
 		}
 
 		public void ButtonClicked()
 		{
-			ScanOfHdDone();
+			Task.Run(new System.Action(ScanOfHdDone));
 		}
 
-		private bool CheckIfHdExistInReflex() { 
-			if(ScannedHd.Quantity < 1)
+		private bool CheckIfHdExists()
+		{
+			if (ScannedHd.Quantity < 1)
 			{
 				MessageBox.Show($"Hd {Hd} is unknown", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
 				return false;
 			}
-			else
-			{
-				InformAboutQuantitesInside();
-				return true;
-			}
+			return true;
 		}
-
-		private bool CheckIfHdIsAlreadyScannedInMySql()
-		{
-			return ScannedHd.CheckIfHdIsAlreadyScannedInMySql();
-		}
-
+		
 		private void ClearInformationLabel()
 		{
 			InformationLabel = String.Empty;
@@ -124,9 +149,11 @@ namespace VasProductivity.ViewModels
 
 		private void DownloadAndSetPackStationsInComboBox()
 		{
-			PackStations = DataAccessModel.GetPackStations();
-			SelectedPackStation = PackStations.Where(x => x.id == Settings.Default.SelectedPackStationSetting)
+			PackStations = MysqlAccessModel.GetPackStations();
+			SelectedPackStation = PackStations.Where(x => x.PackStationID == Settings.Default.SelectedPackStationSetting)
 				.FirstOrDefault();
+			ScannedHd.PackStationID = SelectedPackStation.PackStationID;
+			ScannedHd.PackStationName = SelectedPackStation.PackStationName;
 		}
 
 		private void ClearScanningTextBox()
@@ -136,7 +163,7 @@ namespace VasProductivity.ViewModels
 
 		private void InformAboutQuantitesInside()
 		{
-			InformationLabel = $"Hd {Hd} have {ScannedHd.Quantity} items inside.";
+			InformationLabel = $"Hd {ScannedHd.HdNumber} have {ScannedHd.Quantity} items inside. Order: {ScannedHd.Order.OrderName}";
 		}
 
 		private bool CheckIfHdIsNumeric()

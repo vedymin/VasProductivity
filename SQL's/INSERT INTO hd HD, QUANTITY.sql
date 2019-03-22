@@ -1,0 +1,1 @@
+INSERT INTO `vas_productivity_database`.`hd` (`HdNumber`, `Quantity`) VALUES ('000000050002049333', '10');
