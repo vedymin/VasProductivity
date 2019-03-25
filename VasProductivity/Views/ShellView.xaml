@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        Title="VAS Productivity" Height="150" Width="800">
+        Title="{Binding Title}" Height="150" Width="800">
     <Border Padding="10">
         <StackPanel>
 

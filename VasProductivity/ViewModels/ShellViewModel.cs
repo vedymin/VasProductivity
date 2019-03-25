@@ -9,6 +9,7 @@ using VasProductivity.Properties;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using VasProductivity.Models;
+using System.Reflection;
 
 namespace VasProductivity.ViewModels
 {
@@ -19,10 +20,13 @@ namespace VasProductivity.ViewModels
 		public ShellViewModel()
 		{
 			DownloadAndSetPackStationsInComboBox();
+			Title = $"VasProductivity - version: {Assembly.GetEntryAssembly().GetName().Version}";
 			//var Vases = ReflexAccessModel.DownloadAllVases();
 			//MysqlAccessModel.PopulateVases(Vases);
 			//ReflexAccessModel.DownloadVasesForOrder();
 		}
+
+		public string Title { get; set; }
 
 		private string _hd;
 		public string Hd {
