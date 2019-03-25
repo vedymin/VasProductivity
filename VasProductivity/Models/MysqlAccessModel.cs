@@ -62,20 +62,25 @@ namespace VasProductivity.Models
 
 		public static void InsertAllBoxesToHdTable(List<HdModel> hds)
 		{
-			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
+			IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database"));
+			connection.Open();
+			using (var trans = connection.BeginTransaction())
 			{
+
 				foreach (var item in hds)
 				{
-					connection.Execute("InsertAllBoxesToHdTable", new { HdNumber = item.HdNumber , OrderName = item.Order.OrderName }, commandType: CommandType.StoredProcedure);
+					connection.Execute("InsertAllBoxesToHdTable", new { HdNumber = item.HdNumber, OrderName = item.Order.OrderName }, commandType: CommandType.StoredProcedure);
 				}
+
+				trans.Commit();
 			}
 		}
 
-		internal static void InsertOrder(string orderName)
+		public static void InsertOrder(string orderName)
 		{
 			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
 			{
-				connection.Execute("InsertOrder", new { Order = orderName } , commandType: CommandType.StoredProcedure);
+				connection.Execute("InsertOrder", new { OrderName = orderName }, commandType: CommandType.StoredProcedure);
 			}
 		}
 
@@ -89,11 +94,11 @@ namespace VasProductivity.Models
 
 		}
 
-		internal static void UpdateQuantityInHdTable(HdModel hd)
+		public static void UpdateQuantityInHdTable(HdModel hd)
 		{
 			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
 			{
-				connection.Execute("UpdateQuantityInHdTable", new { HdNumber = hd.HdNumber, Quantity = hd.Quantity}, commandType: CommandType.StoredProcedure);
+				connection.Execute("UpdateQuantityInHdTable", new { HdNumber = hd.HdNumber, Quantity = hd.Quantity }, commandType: CommandType.StoredProcedure);
 			}
 		}
 
@@ -106,6 +111,25 @@ namespace VasProductivity.Models
 		//	}
 
 		//}
+
+		public static void InsertVasesForOrder(HdModel hd)
+		{
+			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
+			{
+				foreach (var vas in hd.Order.Vases)
+				{
+					connection.Execute("InsertVasesForOrder", new { OrderName = hd.Order.OrderName, Flag = vas.Flag, FlagValue = vas.FlagValue }, commandType: CommandType.StoredProcedure);
+				}
+			}
+		}
+
+		public static void PopulateVases(List<VasModel> vases)
+		{
+			using (IDbConnection connection = new MySqlConnection(ConnectionHelper.CnnVall("vas_productivity_database")))
+			{
+				connection.Execute("PopulateVases", vases , commandType: CommandType.StoredProcedure);
+			}
+		}
 
 	}
 }

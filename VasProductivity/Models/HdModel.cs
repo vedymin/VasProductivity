@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using VasProductivity.Models;
 
@@ -94,8 +95,18 @@ namespace VasProductivity
 
 		internal bool CheckIfExistsInHdTable()
 		{
-			Order.OrderName = MysqlAccessModel.DownloadOrderOfHd(HdNumber);
-			return Order.OrderName is null ? false : true;
+			return MysqlAccessModel.CheckIfExistsInHdTable(HdNumber) is null ? false : true;
+		}
+
+		internal void InsertVasesForOrder()
+		{
+			MysqlAccessModel.InsertVasesForOrder(this);
+		}
+
+		internal void DownloadVasesForOrder()
+		{
+			Order.Vases = ReflexAccessModel.DownloadVasesForOrder(Order.OrderName);
+			Order.Vases = Order.Vases.Where(vas => vas.FlagValue != "0").ToList();
 		}
 
 		internal void InsertIntoScannedByPackStation()
@@ -128,10 +139,10 @@ namespace VasProductivity
 			return null;
 		}
 
-		internal void GetOrderOfHd()
-		{
-			OrderName = ReflexAccessModel.DownloadOrderForHd(HdNumber);
-		}
+		//internal void GetOrderOfHd()
+		//{
+		//	OrderName = ReflexAccessModel.DownloadOrderForHd(HdNumber);
+		//}
 
 		internal void InsertScannedHdIntoDatabase()
 		{

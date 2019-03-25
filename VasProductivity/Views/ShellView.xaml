@@ -40,7 +40,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" Content="Hd:" FontSize="14" />
-                <TextBox Text="{Binding Hd, Mode=TwoWay}" 
+                <TextBox Text="{Binding Hd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                          Grid.Column="1" 
                          VerticalAlignment="Center" 
                          cal:Message.Attach="[Event KeyDown] = [Action EnterPressed($eventArgs)]"

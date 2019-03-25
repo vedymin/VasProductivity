@@ -19,6 +19,9 @@ namespace VasProductivity.ViewModels
 		public ShellViewModel()
 		{
 			DownloadAndSetPackStationsInComboBox();
+			//var Vases = ReflexAccessModel.DownloadAllVases();
+			//MysqlAccessModel.PopulateVases(Vases);
+			//ReflexAccessModel.DownloadVasesForOrder();
 		}
 
 		private string _hd;
@@ -68,6 +71,7 @@ namespace VasProductivity.ViewModels
 			{
 				ScannedHd.HdNumber = Hd;
 				ClearInformationLabel();
+				InformAboutWorking();
 				ClearScanningTextBox();
 
 				if (ScannedHd.CheckIfHdIsNumeric() == false) return;
@@ -93,24 +97,12 @@ namespace VasProductivity.ViewModels
 				else
 				{
 					ScannedHd.InsertOrder();
-					//ScannedHd.DownloadVasesForOrder();
-					//ScannedHd.InsertVasesForOrder();
-					//ScannedHd.DownloadAndUpdateAllBoxesForOrder();
+					ScannedHd.DownloadVasesForOrder();
+					ScannedHd.InsertVasesForOrder();
+					ScannedHd.DownloadAndUpdateAllBoxesForOrder();
 				}
 				ScannedHd.UpdateQuantityInHdTable();
 				ScannedHd.InsertIntoScannedByPackStation();
-
-
-				//ScannedHd.InsertScannedHdIntoDatabase();
-				//ScannedHd.GetOrderOfHd();
-				// ScannedHd.GetVasOfHdFromReflex();
-
-				// you can refactor below as one function UpdateBoxesForOrder
-
-
-				//ScannedHd.SavePackStation(SelectedPackStation.id);
-				//ScannedHd.InsertScannedHdIntoDatabase();
-
 			}
 			finally
 			{
@@ -147,6 +139,11 @@ namespace VasProductivity.ViewModels
 			InformationLabel = String.Empty;
 		}
 
+		private void InformAboutWorking()
+		{
+			InformationLabel = $"HD {this.Hd} scanned. Wait for results...";
+		}
+
 		private void DownloadAndSetPackStationsInComboBox()
 		{
 			PackStations = MysqlAccessModel.GetPackStations();
@@ -163,7 +160,7 @@ namespace VasProductivity.ViewModels
 
 		private void InformAboutQuantitesInside()
 		{
-			InformationLabel = $"Hd {ScannedHd.HdNumber} have {ScannedHd.Quantity} items inside. Order: {ScannedHd.Order.OrderName}";
+			InformationLabel = $"Hd {ScannedHd.HdNumber} have {ScannedHd.Quantity} items inside.";
 		}
 
 		private bool CheckIfHdIsNumeric()
